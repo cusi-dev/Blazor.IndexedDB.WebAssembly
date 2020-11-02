@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace Blazor.IndexedDB.WebAssembly.Extensions
@@ -10,9 +9,6 @@ namespace Blazor.IndexedDB.WebAssembly.Extensions
         {
             var lambda = navigationPropertyPath as LambdaExpression;
             var member = lambda.Body as MemberExpression;
-
-            var memberName = member.Member.Name;
-            Debug.WriteLine(memberName);
 
             return source;
         }

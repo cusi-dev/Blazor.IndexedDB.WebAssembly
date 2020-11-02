@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -30,13 +29,10 @@ namespace Blazor.IndexedDB.WebAssembly
                 Version = this.Version,
             };
 
-            Debug.WriteLine($"{nameof(IndexedDb)} - Building database {name} V{version}");
             this.Build(dbStore);
 
-            Debug.WriteLine($"{nameof(IndexedDb)} - Opening connector");
             this.connector = new IndexedDBManager(dbStore, jSRuntime);
 
-            Debug.WriteLine($"{nameof(IndexedDb)} - Loading data");
             this.init = this.LoadData();
 
             this.connector.ActionCompleted += Connector_ActionCompleted;
@@ -44,7 +40,7 @@ namespace Blazor.IndexedDB.WebAssembly
 
         private void Connector_ActionCompleted(object sender, IndexedDBNotificationArgs e)
         {
-            Debug.WriteLine(e.Message);
+            
         }
 
         /// <summary>
@@ -59,19 +55,14 @@ namespace Blazor.IndexedDB.WebAssembly
 
         public async Task<bool> WaitForConnection()
         {
-            Debug.WriteLine("Waiting for connection...");
 
             await Task.WhenAll(this.init);
-
-            Debug.WriteLine("Connected with " + (this.init.IsFaulted ? "Error" : "Success"));
 
             return this.init.IsCompleted && !this.init.IsFaulted;
         }
 
         public async Task SaveChanges()
         {
-            Debug.WriteLine($"Saving changes...");
-
             var tables = this.GetType().GetProperties()
                 .Where(x => x.PropertyType.IsGenericType && x.PropertyType.GetGenericTypeDefinition() == typeof(IndexedSet<>));
 
@@ -84,7 +75,6 @@ namespace Blazor.IndexedDB.WebAssembly
 
                 foreach (var row in indexedSet.GetType().GetMethod("GetChanged", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(indexedSet, null) as IEnumerable<IndexedEntity>)
                 {
-                    Debug.WriteLine($"Saving row");
                     switch (row.State)
                     {
                         case EntityState.Detached:
@@ -107,11 +97,8 @@ namespace Blazor.IndexedDB.WebAssembly
                         default:
                             throw new NotSupportedException();
                     }
-                    Debug.WriteLine($"Row saved");
                 }
             }
-
-            Debug.WriteLine($"All changes saved");
         }
 
         /// <summary>
@@ -200,15 +187,11 @@ namespace Blazor.IndexedDB.WebAssembly
                             throw new InvalidOperationException("PK already defined");
                         }
 
-                        Debug.WriteLine($"{nameof(IndexedDb)} - {schemaProperty.Name} - PK-> {columnName}");
-
                         index.Auto = true;
                         schema.PrimaryKey = index;
                     }
                     else if (!foreignKey)
                     {
-                        Debug.WriteLine($"{nameof(IndexedDb)} - {schemaProperty.Name} - Property -> {columnName}");
-
                         schema.Indexes.Add(index);
                     }
                 }
@@ -244,7 +227,6 @@ namespace Blazor.IndexedDB.WebAssembly
                 // Add schema to registered schemas
                 dbStore.Stores.Add(schema);
             }
-            Debug.WriteLine($"{nameof(IndexedDb)} - Schema has been built");
         }
 
         /// <summary>
@@ -270,8 +252,6 @@ namespace Blazor.IndexedDB.WebAssembly
         /// <returns></returns>
         private PropertyInfo GetPrimaryKey(Type rowType, string tableName)
         {
-            Debug.WriteLine($"Trying to resolve PK for {rowType.Name} in table {tableName}");
-
             var storePk = this.connector.Stores.Single(x => x.Name == tableName).PrimaryKey.KeyPath;
 
             return rowType.GetProperties().Single(x => this.FirstToLower(x.Name) == storePk);
@@ -289,12 +269,10 @@ namespace Blazor.IndexedDB.WebAssembly
                 var propertyType = table.PropertyType.GetGenericArguments()[0];
 
                 // Get generic records of table
-                Debug.WriteLine($"{nameof(IndexedDb)} - Load table {table.Name}");
                 var records = await this.GetRows(propertyType, table.Name);
 
                 var pkProperty = this.GetPrimaryKey(propertyType, table.Name);
 
-                Debug.WriteLine($"{nameof(IndexedDb)} - Set table {table.Name}");
                 table.SetValue(this, Activator.CreateInstance(table.PropertyType, records, pkProperty));
 
             }

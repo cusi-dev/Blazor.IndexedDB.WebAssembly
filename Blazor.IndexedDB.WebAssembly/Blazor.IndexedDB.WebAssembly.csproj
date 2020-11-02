@@ -7,7 +7,7 @@
     <RazorLangVersion>3.0</RazorLangVersion>
     <LangVersion>7.3</LangVersion>
     <AssemblyName>Blazor.IndexedDB.WebAssembly</AssemblyName>
-    <Version>1.1.0</Version>
+    <Version>1.1.1-cusi</Version>
     <Authors>Johnjalani</Authors>
     <Description>A Blazor web assembly for interacting with IndexedDB</Description>
     <RepositoryUrl>https://github.com/johnjalani/Blazor.IndexedDB.WebAssembly</RepositoryUrl>
@@ -19,15 +19,15 @@
     <PackageId>Johnjalani.Blazor.IndexedDB.WebAssembly</PackageId>
     <PackageIconUrl></PackageIconUrl>
     <RootNamespace>Blazor.IndexedDB.WebAssembly</RootNamespace>
-    <AssemblyVersion>1.1.0.1</AssemblyVersion>
-    <FileVersion>1.1.0.1</FileVersion>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>fire.png</PackageIcon>
     <PackageProjectUrl>https://github.com/johnjalani/Blazor.IndexedDB.WebAssembly</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Browser" Version="3.0.0-preview6.19307.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.9" />
     <PackageReference Include="TG.Blazor.IndexedDB" Version="1.5.0-preview" />
   </ItemGroup>
 

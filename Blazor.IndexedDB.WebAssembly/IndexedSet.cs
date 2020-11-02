@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -29,8 +28,6 @@ namespace Blazor.IndexedDB.WebAssembly
                 return;
             }
 
-            Debug.WriteLine($"{nameof(IndexedEntity)} - Construct - Add records");
-
             foreach (var item in records)
             {
                 var indexedItem = new IndexedEntity<T>(item)
@@ -40,8 +37,6 @@ namespace Blazor.IndexedDB.WebAssembly
 
                 this.internalItems.Add(indexedItem);
             }
-
-            Debug.WriteLine($"{nameof(IndexedEntity)} - Construct - Add records DONE");
         }
 
         public bool IsReadOnly => false;
@@ -52,8 +47,6 @@ namespace Blazor.IndexedDB.WebAssembly
         {
             if (!this.internalItems.Select(x => x.Instance).Contains(item))
             {
-                Debug.WriteLine($"{nameof(IndexedEntity)} - Added item of type {typeof(T).Name}");
-
                 this.internalItems.Add(new IndexedEntity<T>(item)
                 {
                     State = EntityState.Added
@@ -87,23 +80,18 @@ namespace Blazor.IndexedDB.WebAssembly
             // If reference was lost search for pk, increases the required time
             else
             {
-                Debug.WriteLine("Searching for equality with PK");
-
                 var value = this.primaryKey.GetValue(item);
 
                 internalItem = this.internalItems.FirstOrDefault(x => this.primaryKey.GetValue(x.Instance).Equals(value));
 
                 if (internalItem != null)
                 {
-                    Debug.WriteLine($"Found item with id {value}");
-
                     internalItem.State = EntityState.Deleted;
 
                     return true;
                 }
             }
 
-            Debug.WriteLine("Could not find internal stored item");
             return false;
         }
 
@@ -131,7 +119,6 @@ namespace Blazor.IndexedDB.WebAssembly
                     continue;
                 }
 
-                Debug.WriteLine("Item yield");
                 yield return item;
             }
         }

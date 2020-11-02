@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Blazor.IndexedDB.WebAssembly
 {
@@ -28,7 +27,6 @@ namespace Blazor.IndexedDB.WebAssembly
                 var code = property.GetValue(this.Instance)?.GetHashCode() ?? defaultHashCode;
                 // ToDo: Check if GetHashCode collisions may occour and its severity
                 this.snapshot.Add(property.Name, code);
-                Debug.WriteLine($"Took snapshot of property {property.Name} with code {code}");
             }
         }
 
